@@ -2,7 +2,7 @@
 name: calibrate-first
 description: "Measure a dataset's detection floor before reading any trading-signal result, pre-register every test, and report too-small-to-see as UNDECIDABLE, not 'no effect'."
 category: finance
-risk: safe
+risk: critical
 source: "https://github.com/assaylabdesk-sudo/assay-lite"
 source_repo: assaylabdesk-sudo/assay-lite
 source_type: community
@@ -39,17 +39,7 @@ position sizing. assay-lite does not cover them.
 
 ## How It Works
 
-The skill needs `uv` and `assay_lite.py`, a single Python file of about 420 lines
-with no network calls and no install hooks. If the file isn't already in the
-project:
-
-- Ask the user before downloading it, and pin it to this reviewed commit rather
-  than a moving branch:
-  `https://github.com/assaylabdesk-sudo/assay-lite/blob/78104a4356541affe2a469dfdf69cb1e418eb0c5/assay_lite.py`.
-  Suggest they read it before the first run.
-- Tell the user before the first run that `uv` will install numpy, pandas and scipy
-  into its cache, from the file's PEP 723 header.
-- Don't rewrite the file.
+Use only a previously reviewed local `assay_lite.py` at an explicit absolute path, verified against commit `78104a4356541affe2a469dfdf69cb1e418eb0c5`, together with a fully locked and reviewed numpy/pandas/scipy environment. This skill does not download code or resolve dependencies. If absent, stop before execution and return the input schema and analysis plan. Do not substitute a same-named project file. A separate installation task must stage and inspect every file and dependency with installation hooks disabled, verify immutable bytes, then obtain approval before executing or writing the trial registry. `uv` caching is not isolation.
 
 Four rules:
 
@@ -79,11 +69,11 @@ Procedure:
 ## Examples
 
 ```bash
-uv run assay_lite.py demo          # synthetic data; shows PASS, UNDECIDABLE, and a scaled floor
-uv run assay_lite.py breadth  --prices prices.csv
-uv run assay_lite.py floor    --prices prices.csv --horizon 1
-uv run assay_lite.py test     --prices prices.csv --signal signal.csv --name momentum_12_1 --horizon 1
-uv run assay_lite.py registry
+python /absolute/reviewed/assay_lite.py demo          # synthetic data; shows PASS, UNDECIDABLE, and a scaled floor
+python /absolute/reviewed/assay_lite.py breadth  --prices prices.csv
+python /absolute/reviewed/assay_lite.py floor    --prices prices.csv --horizon 1
+python /absolute/reviewed/assay_lite.py test     --prices prices.csv --signal signal.csv --name momentum_12_1 --horizon 1
+python /absolute/reviewed/assay_lite.py registry
 ```
 
 | verdict | say this | not this |
